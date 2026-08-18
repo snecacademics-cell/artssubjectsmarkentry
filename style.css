@@ -1,0 +1,184 @@
+:root {
+  --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  --sidebar-bg: #1e1e2f;
+  --sidebar-text: #cbd5e1;
+  --body-bg: #f4f6f9;
+  
+  /* Status Accents */
+  --status-success: #05c46b;
+  --status-error: #fc5c65;
+  --status-info: #4b7bec;
+  
+  /* Radius Tokens */
+  --radius-pill: 50px;
+  --radius-capsule: 30px;
+  --radius-panel: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+}
+
+body {
+  background-color: var(--body-bg);
+  color: #334155;
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* Dynamic Smooth Transitions */
+.interactive, button, .card, input, select {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive:hover, button:hover, .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Authentication Screen */
+.auth-wrapper {
+  position: fixed;
+  inset: 0;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 420px;
+  border-radius: var(--radius-panel);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.input-capsule {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.input-capsule input, .input-capsule select {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid #e2e8f0;
+  outline: none;
+  font-size: 0.95rem;
+  background: #f8fafc;
+}
+
+.input-capsule input:focus, .input-capsule select:focus {
+  border-color: #2a5298;
+  background: #ffffff;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #64748b;
+}
+
+.btn-pill {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--primary-gradient);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Dashboard App Layout */
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  border-top-right-radius: var(--radius-capsule);
+  border-bottom-right-radius: var(--radius-capsule);
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.card {
+  background: #fff;
+  border-radius: var(--radius-capsule);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+/* Responsive Table */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-panel);
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+th {
+  background: #f8fafc;
+  color: #475569;
+}
+
+/* Native Modal Replacement */
+.custom-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-panel);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .app-container { flex-direction: column; }
+  .sidebar { width: 100%; border-radius: 0; height: auto; }
+}
