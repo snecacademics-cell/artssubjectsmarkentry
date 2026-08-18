@@ -17,6 +17,7 @@ const ACADEMIC_MAP = {
 };
 
 let deferredPrompt;
+let pendingSaveData = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   initAuth();
@@ -27,8 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("loginForm").addEventListener("submit", handleLoginSubmit);
   document.getElementById("logoutBtn").addEventListener("click", instantLogout);
-  document.getElementById("saveMarksBtn").addEventListener("click", handleSaveMarks);
+  document.getElementById("saveMarksBtn").addEventListener("click", handleSaveMarksClick);
   document.getElementById("modalCloseBtn").addEventListener("click", closeModal);
+  document.getElementById("confirmYesBtn").addEventListener("click", executePendingSave);
+  document.getElementById("confirmNoBtn").addEventListener("click", () => {
+    document.getElementById("confirmModal").style.display = "none";
+  });
 });
 
 function showAlert(message) {
@@ -94,19 +99,28 @@ function initPasswordToggle() {
   });
 }
 
-/* Class selection change event fix */
 function initDynamicDropdowns() {
   const classSelect = document.getElementById("classSelect");
   const examSelect = document.getElementById("examSelect");
   const subjectSelect = document.getElementById("subjectSelect");
 
+  const triggerFetch = () => {
+    const selectedClass = classSelect.value;
+    const examType = examSelect.value;
+    const subject = subjectSelect.value;
+
+    if (selectedClass && examType && subject) {
+      const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
+      if (teacher) {
+        loadStudents(teacher.affiliationNo, selectedClass, examType, subject);
+      }
+    } else {
+      document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
+    }
+  };
+
   classSelect.addEventListener("change", (e) => {
     const selectedClass = e.target.value;
-    const tbody = document.getElementById("studentTableBody");
-
-    // Instantly clear student list when class is changed
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading students...</td></tr>`;
-
     examSelect.innerHTML = '<option value="">Select Exam</option>';
     subjectSelect.innerHTML = '<option value="">Select Subject</option>';
 
@@ -117,79 +131,106 @@ function initDynamicDropdowns() {
       ACADEMIC_MAP[selectedClass].subjects.forEach(sub => {
         subjectSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
       });
-
-      const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
-      if (teacher) {
-        // Fetch new student list dynamically
-        loadStudents(teacher.affiliationNo, selectedClass);
-      }
-    } else {
-      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Select Class filter to view students</td></tr>`;
     }
+    triggerFetch();
   });
+
+  examSelect.addEventListener("change", triggerFetch);
+  subjectSelect.addEventListener("change", triggerFetch);
+  document.getElementById("maxMarksInput").addEventListener("input", recalculateAllPercentages);
 }
 
-/* Fetch Filtered Students with Cache Buster */
-async function loadStudents(affiliationNo, selectedClass) {
+async function loadStudents(affiliationNo, selectedClass, examType, subject) {
   try {
+    const tbody = document.getElementById("studentTableBody");
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Loading students data...</td></tr>`;
+
     const res = await fetch(GAS_API_URL, {
       method: "POST",
-      body: JSON.stringify({ action: "getStudents", affiliationNo, selectedClass })
+      body: JSON.stringify({ action: "getStudents", affiliationNo, selectedClass, examType, subject })
     });
     const data = await res.json();
     
     if (data.success) {
       renderTable(data.students);
-    } else {
-      showAlert("Error loading students: " + data.message);
     }
   } catch (err) {
     showAlert("Failed to retrieve student records.");
   }
 }
 
-/* Render Updated Table Without Class Column */
 function renderTable(students) {
   const tbody = document.getElementById("studentTableBody");
   tbody.innerHTML = "";
 
   if (!students || students.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found for this class</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No students found for this class</td></tr>`;
     return;
   }
 
+  const maxMarks = parseFloat(document.getElementById("maxMarksInput").value) || 100;
+
   students.forEach((s, index) => {
+    let percText = "-";
+    if (s.existingMark !== "" && !isNaN(s.existingMark)) {
+      percText = ((parseFloat(s.existingMark) / maxMarks) * 100).toFixed(1) + "%";
+    }
+
     tbody.innerHTML += `
       <tr>
         <td style="color: #64748b; font-weight: 600;">${index + 1}</td>
         <td><strong>${s.uid}</strong></td>
         <td>${s.name}</td>
         <td>
-          <input type="number" class="mark-input" data-id="${s.uid}" data-name="${s.name}" placeholder="Mark" style="width:90px; padding:0.4rem 0.8rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;">
+          <input type="number" class="mark-input" data-id="${s.uid}" data-name="${s.name}" value="${s.existingMark}" placeholder="Mark" style="width:75px; padding:0.4rem 0.6rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;" oninput="updateRowPercentage(this)">
         </td>
+        <td class="perc-cell" style="font-weight:600; color:#2a5298;">${percText}</td>
       </tr>
     `;
   });
 }
 
-async function handleSaveMarks() {
+function updateRowPercentage(inputElem) {
+  const row = inputElem.closest("tr");
+  const percCell = row.querySelector(".perc-cell");
+  const maxMarks = parseFloat(document.getElementById("maxMarksInput").value) || 100;
+  const val = parseFloat(inputElem.value);
+
+  if (!isNaN(val) && maxMarks > 0) {
+    const perc = ((val / maxMarks) * 100).toFixed(1);
+    percCell.innerText = `${perc}%`;
+  } else {
+    percCell.innerText = "-";
+  }
+}
+
+function recalculateAllPercentages() {
+  const markInputs = document.querySelectorAll(".mark-input");
+  markInputs.forEach(input => updateRowPercentage(input));
+}
+
+function handleSaveMarksClick() {
   const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
   const className = document.getElementById("classSelect").value;
   const examType = document.getElementById("examSelect").value;
   const subject = document.getElementById("subjectSelect").value;
-  const maxMarks = document.getElementById("maxMarksInput").value || "50";
+  const maxMarks = document.getElementById("maxMarksInput").value || "100";
   const examDate = document.getElementById("examDateInput").value || "";
 
   if (!className || !examType || !subject) {
-    showAlert("Please select Class, Exam, and Subject.");
+    showAlert("Please select Class, Exam, and Subject first.");
     return;
   }
 
   const markInputs = document.querySelectorAll(".mark-input");
+  const totalStudents = markInputs.length;
   const marksData = [];
 
   markInputs.forEach(input => {
     if (input.value !== "") {
+      const markVal = parseFloat(input.value);
+      const percVal = ((markVal / parseFloat(maxMarks)) * 100).toFixed(1) + "%";
+
       marksData.push({
         affiliationNo: teacher.affiliationNo,
         teacherId: teacher.id,
@@ -199,23 +240,48 @@ async function handleSaveMarks() {
         className,
         examType,
         subject,
-        mark: input.value,
-        maxMarks: maxMarks
+        mark: markVal,
+        maxMarks: maxMarks,
+        percentage: percVal
       });
     }
   });
 
   if (marksData.length === 0) {
-    showAlert("Please enter marks for at least one student.");
+    showAlert("Please enter marks for at least one student before saving.");
     return;
   }
 
-  const res = await fetch(GAS_API_URL, {
-    method: "POST",
-    body: JSON.stringify({ action: "saveMarks", marksData })
-  });
-  const data = await res.json();
-  showAlert(data.message);
+  pendingSaveData = marksData;
+
+  if (marksData.length < totalStudents) {
+    document.getElementById("confirmMessage").innerText = `You have entered marks for ${marksData.length} out of ${totalStudents} students.\n\nDo you want to submit partial marks now and enter the remaining students later?`;
+    document.getElementById("confirmModal").style.display = "flex";
+  } else {
+    executePendingSave();
+  }
+}
+
+async function executePendingSave() {
+  document.getElementById("confirmModal").style.display = "none";
+  if (!pendingSaveData) return;
+
+  try {
+    const res = await fetch(GAS_API_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "saveMarks", marksData: pendingSaveData })
+    });
+    const data = await res.json();
+    showAlert(data.message);
+
+    // Clear filters and fields after successful submission
+    document.getElementById("subjectSelect").value = "";
+    document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
+    pendingSaveData = null;
+
+  } catch (err) {
+    showAlert("Error saving marks. Please try again.");
+  }
 }
 
 function initKeyboardNavigation() {
