@@ -154,13 +154,14 @@ function renderTable(students) {
   tbody.innerHTML = "";
 
   if (!students || students.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No students found for this class</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found for this class</td></tr>`;
     return;
   }
 
-  students.forEach(s => {
+  students.forEach((s, index) => {
     tbody.innerHTML += `
       <tr>
+        <td style="color: #64748b; font-weight: 600;">${index + 1}</td>
         <td><strong>${s.uid}</strong></td>
         <td>${s.name}</td>
         <td>
