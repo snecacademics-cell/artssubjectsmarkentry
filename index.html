@@ -6,11 +6,10 @@
   <title>SNEC Academics Portal</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-  <!-- Authentication Screen -->
+  <!-- Login Screen -->
   <div id="authScreen" class="auth-wrapper">
     <div class="auth-card">
       <h2 style="margin-bottom:0.5rem; color:#1e3c72;">SNEC Portal</h2>
@@ -33,13 +32,13 @@
     </div>
   </div>
 
-  <!-- Main Portal Layout -->
+  <!-- Dashboard Screen -->
   <div id="appContainer" class="app-container" style="display:none;">
     <aside class="sidebar">
       <h3 style="color:#fff; margin-bottom: 2rem;"><i class="fa-solid fa-graduation-cap"></i> SNEC App</h3>
       <div id="teacherProfile" style="margin-bottom: 2rem;">
         <p id="profileName" style="font-weight:bold; color:#fff;"></p>
-        <p id="profileCollege" style="font-size:0.8rem;"></p>
+        <p id="profileCollege" style="font-size:0.8rem; margin-top:0.3rem; color:#cbd5e1;"></p>
       </div>
       <button id="logoutBtn" class="btn-pill interactive" style="margin-top:auto; background:var(--status-error);">
         <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -50,7 +49,7 @@
       <div class="card">
         <h3>Academic Entry Filters</h3>
         <div style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
-          <div class="input-capsule" style="flex:1; min-width:200px;">
+          <div class="input-capsule" style="flex:1; min-width:180px;">
             <select id="classSelect">
               <option value="">Select Class</option>
               <option value="S1">S1 (Class 8)</option>
@@ -58,15 +57,24 @@
               <option value="S3">S3 (Class 10)</option>
             </select>
           </div>
-          <div class="input-capsule" style="flex:1; min-width:200px;">
+          <div class="input-capsule" style="flex:1; min-width:180px;">
             <select id="examSelect">
               <option value="">Select Exam</option>
             </select>
           </div>
-          <div class="input-capsule" style="flex:1; min-width:200px;">
+          <div class="input-capsule" style="flex:1; min-width:180px;">
             <select id="subjectSelect">
               <option value="">Select Subject</option>
             </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:1rem; margin-top:0.5rem; flex-wrap:wrap;">
+          <div class="input-capsule" style="flex:1; min-width:180px;">
+            <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 50)" value="50">
+          </div>
+          <div class="input-capsule" style="flex:1; min-width:180px;">
+            <input type="date" id="examDateInput" title="Exam Date">
           </div>
         </div>
       </div>
@@ -77,14 +85,14 @@
           <table>
             <thead>
               <tr>
-                <th>Admn No</th>
+                <th>UID / Admn No</th>
                 <th>Name</th>
                 <th>Class</th>
                 <th>Marks Obtained</th>
               </tr>
             </thead>
             <tbody id="studentTableBody">
-              <tr><td colspan="4" style="text-align:center;">Select filters to view students</td></tr>
+              <tr><td colspan="4" style="text-align:center;">Select Class filter to view students</td></tr>
             </tbody>
           </table>
         </div>
@@ -93,7 +101,7 @@
     </main>
   </div>
 
-  <!-- App-Native Alert Modal -->
+  <!-- App-Native Modal -->
   <div id="appModal" class="custom-modal">
     <div class="modal-content">
       <p id="modalMessage" style="margin-bottom:1.5rem; font-size:1rem;"></p>
