@@ -182,11 +182,18 @@ function renderTable(students) {
         <td><strong>${s.uid}</strong></td>
         <td>${s.name}</td>
         <td>
-          <input type="number" class="mark-input" data-id="${s.uid}" data-name="${s.name}" value="${s.existingMark}" placeholder="Mark" style="width:75px; padding:0.4rem 0.6rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;" oninput="updateRowPercentage(this)">
+          <input type="number" class="mark-input" data-id="${s.uid}" data-name="${s.name}" value="${s.existingMark}" placeholder="Mark" style="width:80px; padding:0.4rem 0.6rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;">
         </td>
         <td class="perc-cell" style="font-weight:600; color:#2a5298;">${percText}</td>
       </tr>
     `;
+  });
+
+  // Attach instant input listener for percentage calculation
+  document.querySelectorAll(".mark-input").forEach(input => {
+    input.addEventListener("input", function() {
+      updateRowPercentage(this);
+    });
   });
 }
 
@@ -274,8 +281,10 @@ async function executePendingSave() {
     const data = await res.json();
     showAlert(data.message);
 
-    // Clear filters and fields after successful submission
-    document.getElementById("subjectSelect").value = "";
+    // Full Form Reset & Clean-up
+    document.getElementById("classSelect").value = "";
+    document.getElementById("examSelect").innerHTML = '<option value="">Select Exam</option>';
+    document.getElementById("subjectSelect").innerHTML = '<option value="">Select Subject</option>';
     document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
     pendingSaveData = null;
 
