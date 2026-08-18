@@ -24,8 +24,6 @@ body {
   background-color: var(--body-bg);
   color: #334155;
   min-height: 100vh;
-  display: flex;
-  overflow-x: hidden;
 }
 
 .interactive, button, .card, input, select {
@@ -37,6 +35,7 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* Authentication */
 .auth-wrapper {
   position: fixed;
   inset: 0;
@@ -97,27 +96,72 @@ body {
   cursor: pointer;
 }
 
-.app-container {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-}
-
-.sidebar {
-  width: 260px;
-  background: var(--sidebar-bg);
-  color: var(--sidebar-text);
-  padding: 1.5rem 1rem;
+/* Top Navigation Header Layout */
+.app-main-wrapper {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  border-top-right-radius: var(--radius-capsule);
-  border-bottom-right-radius: var(--radius-capsule);
+}
+
+.app-header {
+  background: var(--sidebar-bg);
+  color: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-title h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.header-profile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.p-name {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.p-college {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+.btn-logout {
+  background: var(--status-error);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .main-content {
   flex: 1;
   padding: 2rem;
-  overflow-y: auto;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .card {
@@ -142,7 +186,7 @@ table {
 }
 
 th, td {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
@@ -171,6 +215,8 @@ th {
 }
 
 @media (max-width: 768px) {
-  .app-container { flex-direction: column; }
-  .sidebar { width: 100%; border-radius: 0; height: auto; }
+  .app-header { flex-direction: column; align-items: flex-start; }
+  .header-profile { width: 100%; justify-content: space-between; }
+  .profile-info { text-align: left; }
+  .main-content { padding: 1rem; }
 }
