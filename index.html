@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNEC Academics Portal</title>
+  <title>SNEC Arts Subject Exam Marks Entry</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+  <!-- Login Screen -->
   <div id="authScreen" class="auth-wrapper">
     <div class="auth-card">
       <h2 style="margin-bottom:0.5rem; color:#1e3c72;">SNEC Portal</h2>
-      <p style="color:#64748b; font-size:0.85rem; margin-bottom:1.5rem;">Academic Marks Management</p>
+      <p style="color:#64748b; font-size:0.85rem; margin-bottom:1.5rem;">Arts Subject Exam Marks Entry</p>
 
       <form id="loginForm">
         <div class="input-capsule">
@@ -31,22 +32,29 @@
     </div>
   </div>
 
-  <div id="appContainer" class="app-container" style="display:none;">
-    <aside class="sidebar">
-      <h3 style="color:#fff; margin-bottom: 2rem;"><i class="fa-solid fa-graduation-cap"></i> SNEC App</h3>
-      <div id="teacherProfile" style="margin-bottom: 2rem;">
-        <p id="profileName" style="font-weight:bold; color:#fff;"></p>
-        <p id="profileCollege" style="font-size:0.8rem; margin-top:0.3rem; color:#cbd5e1;"></p>
+  <!-- Dashboard Screen (No Sidebar) -->
+  <div id="appContainer" class="app-main-wrapper" style="display:none;">
+    
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-title">
+        <h2><i class="fa-solid fa-graduation-cap"></i> SNEC Arts Subject Exam Marks Entry</h2>
       </div>
-      <button id="logoutBtn" class="btn-pill interactive" style="margin-top:auto; background:var(--status-error);">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-      </button>
-    </aside>
+      <div class="header-profile">
+        <div class="profile-info">
+          <span id="profileName" class="p-name"></span>
+          <span id="profileCollege" class="p-college"></span>
+        </div>
+        <button id="logoutBtn" class="btn-logout interactive">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </header>
 
     <main class="main-content">
+      <!-- Filters Card -->
       <div class="card">
-        <h3>Academic Entry Filters</h3>
-        <div style="display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap;">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
           <div class="input-capsule" style="flex:1; min-width:180px;">
             <select id="classSelect">
               <option value="">Select Class</option>
@@ -67,7 +75,7 @@
           </div>
         </div>
 
-        <div style="display:flex; gap:1rem; margin-top:0.5rem; flex-wrap:wrap;">
+        <div style="display:flex; gap:1rem; margin-top:0.2rem; flex-wrap:wrap;">
           <div class="input-capsule" style="flex:1; min-width:180px;">
             <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 100)" value="100">
           </div>
@@ -77,6 +85,7 @@
         </div>
       </div>
 
+      <!-- Student List Table -->
       <div class="card">
         <h3>Students List</h3>
         <div class="table-responsive" style="margin-top:1rem;">
@@ -100,6 +109,7 @@
     </main>
   </div>
 
+  <!-- Standard Alert Modal -->
   <div id="appModal" class="custom-modal">
     <div class="modal-content">
       <p id="modalMessage" style="margin-bottom:1.5rem; font-size:1rem;"></p>
@@ -107,6 +117,7 @@
     </div>
   </div>
 
+  <!-- Partial Confirmation Modal -->
   <div id="confirmModal" class="custom-modal">
     <div class="modal-content">
       <p id="confirmMessage" style="margin-bottom:1.5rem; font-size:1rem; text-align: left;"></p>
