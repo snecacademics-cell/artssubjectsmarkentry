@@ -5,7 +5,235 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SNEC Arts Subject Exam Marks Entry</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      --header-bg: #1e1e2f;
+      --body-bg: #f4f6f9;
+      --status-success: #05c46b;
+      --status-error: #fc5c65;
+      --status-info: #4b7bec;
+      --radius-pill: 50px;
+      --radius-capsule: 25px;
+      --radius-panel: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+    }
+
+    body {
+      background-color: var(--body-bg);
+      color: #334155;
+      min-height: 100vh;
+    }
+
+    .interactive, button, .card, input, select {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .interactive:hover, button:hover, .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Auth Screen */
+    .auth-wrapper {
+      position: fixed;
+      inset: 0;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 420px;
+      border-radius: var(--radius-panel);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .input-capsule {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+
+    .input-capsule input, .input-capsule select {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid #e2e8f0;
+      outline: none;
+      font-size: 0.95rem;
+      background: #f8fafc;
+    }
+
+    .input-capsule input:focus, .input-capsule select:focus {
+      border-color: #2a5298;
+      background: #ffffff;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .btn-pill {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: var(--primary-gradient);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Top Bar Header Layout */
+    .app-main-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      background: var(--header-bg);
+      color: #fff;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .header-profile {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+    }
+
+    .p-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #ffffff;
+    }
+
+    .p-college {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+
+    .btn-logout {
+      background: var(--status-error);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 10px rgba(252, 92, 101, 0.3);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius-capsule);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius-panel);
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    /* Modals */
+    .custom-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 1.5rem 2rem;
+      border-radius: var(--radius-panel);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .app-header { flex-direction: column; align-items: flex-start; }
+      .header-profile { width: 100%; justify-content: space-between; }
+      .profile-info { text-align: left; }
+      .main-content { padding: 1rem; }
+    }
+  </style>
 </head>
 <body>
 
@@ -32,10 +260,9 @@
     </div>
   </div>
 
-  <!-- Dashboard Screen (No Sidebar) -->
+  <!-- Dashboard Screen (Styled Navigation Header) -->
   <div id="appContainer" class="app-main-wrapper" style="display:none;">
     
-    <!-- Top Navigation Header -->
     <header class="app-header">
       <div class="header-title">
         <h2><i class="fa-solid fa-graduation-cap"></i> SNEC Arts Subject Exam Marks Entry</h2>
@@ -52,7 +279,6 @@
     </header>
 
     <main class="main-content">
-      <!-- Filters Card -->
       <div class="card">
         <div style="display:flex; gap:1rem; flex-wrap:wrap;">
           <div class="input-capsule" style="flex:1; min-width:180px;">
@@ -85,7 +311,6 @@
         </div>
       </div>
 
-      <!-- Student List Table -->
       <div class="card">
         <h3>Students List</h3>
         <div class="table-responsive" style="margin-top:1rem;">
@@ -109,7 +334,6 @@
     </main>
   </div>
 
-  <!-- Standard Alert Modal -->
   <div id="appModal" class="custom-modal">
     <div class="modal-content">
       <p id="modalMessage" style="margin-bottom:1.5rem; font-size:1rem;"></p>
@@ -117,7 +341,6 @@
     </div>
   </div>
 
-  <!-- Partial Confirmation Modal -->
   <div id="confirmModal" class="custom-modal">
     <div class="modal-content">
       <p id="confirmMessage" style="margin-bottom:1.5rem; font-size:1rem; text-align: left;"></p>
