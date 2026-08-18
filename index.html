@@ -71,7 +71,7 @@
 
         <div style="display:flex; gap:1rem; margin-top:0.5rem; flex-wrap:wrap;">
           <div class="input-capsule" style="flex:1; min-width:180px;">
-            <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 50)" value="50">
+            <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 100)" value="100">
           </div>
           <div class="input-capsule" style="flex:1; min-width:180px;">
             <input type="date" id="examDateInput" title="Exam Date">
@@ -80,32 +80,44 @@
       </div>
 
       <div class="card">
-  <h3>Students List</h3>
-  <div class="table-responsive" style="margin-top:1rem;">
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 70px;">Sl. No.</th>
-          <th>Students UID</th>
-          <th>Name</th>
-          <th>Marks Obtained</th>
-        </tr>
-      </thead>
-      <tbody id="studentTableBody">
-        <tr><td colspan="4" style="text-align:center;">Select Class filter to view students</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <button id="saveMarksBtn" class="btn-pill interactive" style="margin-top:1rem; background:var(--status-success);">Save Marks Batch</button>
-</div>
+        <h3>Students List</h3>
+        <div class="table-responsive" style="margin-top:1rem;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 70px;">Sl. No.</th>
+                <th>Students UID</th>
+                <th>Name</th>
+                <th style="width: 120px;">Marks Obtained</th>
+                <th style="width: 90px;">Percentage (%)</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button id="saveMarksBtn" class="btn-pill interactive" style="margin-top:1rem; background:var(--status-success);">Save Marks Batch</button>
+      </div>
     </main>
   </div>
 
-  <!-- App-Native Modal -->
+  <!-- Standard Alert Modal -->
   <div id="appModal" class="custom-modal">
     <div class="modal-content">
       <p id="modalMessage" style="margin-bottom:1.5rem; font-size:1rem;"></p>
       <button id="modalCloseBtn" class="btn-pill interactive" style="background:var(--status-info);">OK</button>
+    </div>
+  </div>
+
+  <!-- Partial Confirmation Modal -->
+  <div id="confirmModal" class="custom-modal">
+    <div class="modal-content">
+      <p id="confirmMessage" style="margin-bottom:1.5rem; font-size:1rem; text-align: left;"></p>
+      <div style="display: flex; gap: 10px;">
+        <button id="confirmYesBtn" class="btn-pill interactive" style="background:var(--status-success);">Yes, Save Now</button>
+        <button id="confirmNoBtn" class="btn-pill interactive" style="background:var(--status-error);">Cancel</button>
+      </div>
     </div>
   </div>
 
