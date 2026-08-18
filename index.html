@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SNEC Arts Subject Exam Marks Entry</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <style>
     :root {
@@ -102,7 +102,7 @@
       cursor: pointer;
     }
 
-    /* Top Bar Header Layout */
+    /* Top Navigation Header */
     .app-main-wrapper {
       width: 100%;
       min-height: 100vh;
@@ -165,6 +165,9 @@
       font-weight: 600;
       font-size: 0.85rem;
       box-shadow: 0 4px 10px rgba(252, 92, 101, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .main-content {
@@ -207,7 +210,6 @@
       font-weight: 600;
     }
 
-    /* Modals */
     .custom-modal {
       position: fixed;
       inset: 0;
@@ -260,7 +262,7 @@
     </div>
   </div>
 
-  <!-- Dashboard Screen (Styled Navigation Header) -->
+  <!-- Dashboard Screen -->
   <div id="appContainer" class="app-main-wrapper" style="display:none;">
     
     <header class="app-header">
@@ -303,7 +305,7 @@
 
         <div style="display:flex; gap:1rem; margin-top:0.2rem; flex-wrap:wrap;">
           <div class="input-capsule" style="flex:1; min-width:180px;">
-            <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 100)" value="100">
+            <input type="number" id="maxMarksInput" placeholder="Total Max Marks (e.g. 50, 100)" value="">
           </div>
           <div class="input-capsule" style="flex:1; min-width:180px;">
             <input type="date" id="examDateInput" title="Exam Date">
