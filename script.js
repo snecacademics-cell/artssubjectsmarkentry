@@ -1,4 +1,4 @@
-const GAS_API_URL = "YOUR_DEPLOYED_GAS_WEB_APP_URL"; // ബാക്ക്-എൻഡ് വബ്ബ് ആപ്പ് URL മാറ്റി പേസ്റ്റ് ചെയ്യുക
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec"; // ബാക്ക്-എൻഡ് വബ്ബ് ആപ്പ് URL മാറ്റി പേസ്റ്റ് ചെയ്യുക
 
 const ACADEMIC_MAP = {
   "S1": {
