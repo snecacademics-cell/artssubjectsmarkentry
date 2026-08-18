@@ -94,6 +94,7 @@ function initPasswordToggle() {
   });
 }
 
+/* Class selection change event fix */
 function initDynamicDropdowns() {
   const classSelect = document.getElementById("classSelect");
   const examSelect = document.getElementById("examSelect");
@@ -101,6 +102,11 @@ function initDynamicDropdowns() {
 
   classSelect.addEventListener("change", (e) => {
     const selectedClass = e.target.value;
+    const tbody = document.getElementById("studentTableBody");
+
+    // Instantly clear student list when class is changed
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading students...</td></tr>`;
+
     examSelect.innerHTML = '<option value="">Select Exam</option>';
     subjectSelect.innerHTML = '<option value="">Select Subject</option>';
 
@@ -114,19 +120,18 @@ function initDynamicDropdowns() {
 
       const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
       if (teacher) {
+        // Fetch new student list dynamically
         loadStudents(teacher.affiliationNo, selectedClass);
       }
     } else {
-      document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="4" style="text-align:center;">Select Class filter to view students</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Select Class filter to view students</td></tr>`;
     }
   });
 }
 
+/* Fetch Filtered Students with Cache Buster */
 async function loadStudents(affiliationNo, selectedClass) {
   try {
-    const tbody = document.getElementById("studentTableBody");
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Loading students...</td></tr>`;
-
     const res = await fetch(GAS_API_URL, {
       method: "POST",
       body: JSON.stringify({ action: "getStudents", affiliationNo, selectedClass })
@@ -135,29 +140,31 @@ async function loadStudents(affiliationNo, selectedClass) {
     
     if (data.success) {
       renderTable(data.students);
+    } else {
+      showAlert("Error loading students: " + data.message);
     }
   } catch (err) {
     showAlert("Failed to retrieve student records.");
   }
 }
 
+/* Render Updated Table Without Class Column */
 function renderTable(students) {
   const tbody = document.getElementById("studentTableBody");
   tbody.innerHTML = "";
 
   if (!students || students.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No students found for this class</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No students found for this class</td></tr>`;
     return;
   }
 
   students.forEach(s => {
     tbody.innerHTML += `
       <tr>
-        <td><strong>${s.admissionNo}</strong></td>
+        <td><strong>${s.uid}</strong></td>
         <td>${s.name}</td>
-        <td><span style="background:#e2e8f0; padding:3px 8px; border-radius:12px; font-size:0.85rem;">${s.class}</span></td>
         <td>
-          <input type="number" class="mark-input" data-id="${s.admissionNo}" data-name="${s.name}" placeholder="Mark" style="width:90px; padding:0.4rem 0.8rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;">
+          <input type="number" class="mark-input" data-id="${s.uid}" data-name="${s.name}" placeholder="Mark" style="width:90px; padding:0.4rem 0.8rem; border-radius:15px; border:1px solid #cbd5e1; outline:none;">
         </td>
       </tr>
     `;
