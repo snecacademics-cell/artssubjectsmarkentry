@@ -4,12 +4,10 @@
   --sidebar-text: #cbd5e1;
   --body-bg: #f4f6f9;
   
-  /* Status Accents */
   --status-success: #05c46b;
   --status-error: #fc5c65;
   --status-info: #4b7bec;
   
-  /* Radius Tokens */
   --radius-pill: 50px;
   --radius-capsule: 30px;
   --radius-panel: 20px;
@@ -30,7 +28,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Dynamic Smooth Transitions */
 .interactive, button, .card, input, select {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -40,7 +37,6 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Authentication Screen */
 .auth-wrapper {
   position: fixed;
   inset: 0;
@@ -101,7 +97,6 @@ body {
   cursor: pointer;
 }
 
-/* Dashboard App Layout */
 .app-container {
   display: flex;
   width: 100vw;
@@ -133,7 +128,6 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
-/* Responsive Table */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -157,7 +151,6 @@ th {
   color: #475569;
 }
 
-/* Native Modal Replacement */
 .custom-modal {
   position: fixed;
   inset: 0;
@@ -177,7 +170,6 @@ th {
   text-align: center;
 }
 
-/* Mobile Adjustments */
 @media (max-width: 768px) {
   .app-container { flex-direction: column; }
   .sidebar { width: 100%; border-radius: 0; height: auto; }
