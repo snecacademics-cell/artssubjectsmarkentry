@@ -1,4 +1,4 @@
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec"; // തത്സമയ Web App URL ഇവിടെ മാറ്റി നൽകുക
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec"; // നിങ്ങളുടെ Web App URL ഇവിടെ മാറ്റി ചേർക്കുക
 
 const ACADEMIC_MAP = {
   "S1": {
@@ -17,6 +17,7 @@ const ACADEMIC_MAP = {
 
 let deferredPrompt;
 let pendingSaveData = null;
+let cachedStudentsList = []; // Fast Memory Cache
 
 document.addEventListener("DOMContentLoaded", () => {
   initAuth();
@@ -76,6 +77,7 @@ async function handleLoginSubmit(e) {
 
 function instantLogout() {
   localStorage.removeItem("snec_teacher");
+  cachedStudentsList = [];
   document.getElementById("appContainer").style.display = "none";
   document.getElementById("authScreen").style.display = "flex";
   document.getElementById("loginForm").reset();
@@ -167,11 +169,12 @@ function renderTable(students) {
     return;
   }
 
-  const maxMarks = parseFloat(document.getElementById("maxMarksInput").value) || 100;
+  const maxMarksVal = document.getElementById("maxMarksInput").value;
+  const maxMarks = parseFloat(maxMarksVal);
 
   students.forEach((s, index) => {
     let percText = "-";
-    if (s.existingMark !== "" && !isNaN(s.existingMark)) {
+    if (s.existingMark !== "" && !isNaN(s.existingMark) && !isNaN(maxMarks) && maxMarks > 0) {
       percText = ((parseFloat(s.existingMark) / maxMarks) * 100).toFixed(1) + "%";
     }
 
@@ -188,22 +191,41 @@ function renderTable(students) {
     `;
   });
 
+  // Attach instant input & validation listeners
   document.querySelectorAll(".mark-input").forEach(input => {
     input.addEventListener("input", function() {
-      updateRowPercentage(this);
+      validateAndCalculatePercentage(this);
     });
   });
 }
 
-function updateRowPercentage(inputElem) {
+/* Strict Max Mark Limit Validation Function */
+function validateAndCalculatePercentage(inputElem) {
+  const maxMarksInput = document.getElementById("maxMarksInput");
+  const maxMarksVal = maxMarksInput.value.trim();
+  const maxMarks = parseFloat(maxMarksVal);
   const row = inputElem.closest("tr");
   const percCell = row.querySelector(".perc-cell");
-  const maxMarks = parseFloat(document.getElementById("maxMarksInput").value) || 100;
+
+  if (!maxMarksVal || isNaN(maxMarks) || maxMarks <= 0) {
+    showAlert("Please enter a valid Total Max Marks first.");
+    inputElem.value = "";
+    percCell.innerText = "-";
+    maxMarksInput.focus();
+    return;
+  }
+
   const val = parseFloat(inputElem.value);
 
-  if (!isNaN(val) && maxMarks > 0) {
-    const perc = ((val / maxMarks) * 100).toFixed(1);
-    percCell.innerText = `${perc}%`;
+  if (!isNaN(val)) {
+    if (val > maxMarks) {
+      showAlert(`Mark cannot be greater than Total Max Marks (${maxMarks})!`);
+      inputElem.value = "";
+      percCell.innerText = "-";
+    } else {
+      const perc = ((val / maxMarks) * 100).toFixed(1);
+      percCell.innerText = `${perc}%`;
+    }
   } else {
     percCell.innerText = "-";
   }
@@ -211,7 +233,7 @@ function updateRowPercentage(inputElem) {
 
 function recalculateAllPercentages() {
   const markInputs = document.querySelectorAll(".mark-input");
-  markInputs.forEach(input => updateRowPercentage(input));
+  markInputs.forEach(input => validateAndCalculatePercentage(input));
 }
 
 function handleSaveMarksClick() {
@@ -219,11 +241,16 @@ function handleSaveMarksClick() {
   const className = document.getElementById("classSelect").value;
   const examType = document.getElementById("examSelect").value;
   const subject = document.getElementById("subjectSelect").value;
-  const maxMarks = document.getElementById("maxMarksInput").value || "100";
+  const maxMarksVal = document.getElementById("maxMarksInput").value.trim();
   const examDate = document.getElementById("examDateInput").value || "";
 
   if (!className || !examType || !subject) {
     showAlert("Please select Class, Exam, and Subject first.");
+    return;
+  }
+
+  if (!maxMarksVal || isNaN(parseFloat(maxMarksVal)) || parseFloat(maxMarksVal) <= 0) {
+    showAlert("Please enter Total Max Marks before saving.");
     return;
   }
 
@@ -234,7 +261,7 @@ function handleSaveMarksClick() {
   markInputs.forEach(input => {
     if (input.value !== "") {
       const markVal = parseFloat(input.value);
-      const percVal = ((markVal / parseFloat(maxMarks)) * 100).toFixed(1) + "%";
+      const percVal = ((markVal / parseFloat(maxMarksVal)) * 100).toFixed(1) + "%";
 
       marksData.push({
         affiliationNo: teacher.affiliationNo,
@@ -246,7 +273,7 @@ function handleSaveMarksClick() {
         examType,
         subject,
         mark: markVal,
-        maxMarks: maxMarks,
+        maxMarks: maxMarksVal,
         percentage: percVal
       });
     }
@@ -284,7 +311,7 @@ async function executePendingSave() {
     document.getElementById("examSelect").innerHTML = '<option value="">Select Exam</option>';
     document.getElementById("subjectSelect").innerHTML = '<option value="">Select Subject</option>';
     document.getElementById("examDateInput").value = "";
-    document.getElementById("maxMarksInput").value = "100";
+    document.getElementById("maxMarksInput").value = "";
     document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
     
     pendingSaveData = null;
