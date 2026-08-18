@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SNEC Arts Subject Exam Marks Entry</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <style>
     :root {
@@ -82,15 +81,6 @@
       background: #ffffff;
     }
 
-    .toggle-password {
-      position: absolute;
-      right: 1.25rem;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #64748b;
-    }
-
     .btn-pill {
       width: 100%;
       padding: 0.85rem;
@@ -102,7 +92,7 @@
       cursor: pointer;
     }
 
-    /* Top Navigation Header */
+    /* Clean Header Layout (No Broken Boxes) */
     .app-main-wrapper {
       width: 100%;
       min-height: 100vh;
@@ -126,9 +116,6 @@
       font-size: 1.25rem;
       font-weight: 600;
       color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
     }
 
     .header-profile {
@@ -165,9 +152,6 @@
       font-weight: 600;
       font-size: 0.85rem;
       box-shadow: 0 4px 10px rgba(252, 92, 101, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     .main-content {
@@ -251,14 +235,9 @@
         </div>
         <div class="input-capsule">
           <input type="password" id="password" placeholder="Password" required>
-          <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
         </div>
         <button type="submit" class="btn-pill interactive">Login</button>
       </form>
-      
-      <button id="pwaInstallBtn" class="btn-pill interactive" style="display:none; margin-top:10px; background:#4b7bec;">
-        <i class="fa-solid fa-download"></i> Install App
-      </button>
     </div>
   </div>
 
@@ -267,16 +246,14 @@
     
     <header class="app-header">
       <div class="header-title">
-        <h2><i class="fa-solid fa-graduation-cap"></i> SNEC Arts Subject Exam Marks Entry</h2>
+        <h2>SNEC Arts Subject Exam Marks Entry</h2>
       </div>
       <div class="header-profile">
         <div class="profile-info">
           <span id="profileName" class="p-name"></span>
           <span id="profileCollege" class="p-college"></span>
         </div>
-        <button id="logoutBtn" class="btn-logout interactive">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
+        <button id="logoutBtn" class="btn-logout interactive">Logout</button>
       </div>
     </header>
 
@@ -327,7 +304,7 @@
               </tr>
             </thead>
             <tbody id="studentTableBody">
-              <tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>
+              <tr><td colspan="5" style="text-align:center;">Select Class to load students</td></tr>
             </tbody>
           </table>
         </div>
