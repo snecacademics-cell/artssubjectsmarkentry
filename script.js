@@ -1,4 +1,4 @@
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec"; // നിങ്ങളുടെ Web App URL ഇവിടെ മാറ്റി ചേർക്കുക
+const GAS_API_URL = "YOUR_DEPLOYED_GAS_WEB_APP_URL"; // ബാക്ക്-എൻഡ് വബ്ബ് ആപ്പ് URL മാറ്റി പേസ്റ്റ് ചെയ്യുക
 
 const ACADEMIC_MAP = {
   "S1": {
@@ -15,16 +15,11 @@ const ACADEMIC_MAP = {
   }
 };
 
-let deferredPrompt;
 let pendingSaveData = null;
-let cachedStudentsList = []; // Fast Memory Cache
 
 document.addEventListener("DOMContentLoaded", () => {
   initAuth();
-  initPasswordToggle();
   initDynamicDropdowns();
-  initKeyboardNavigation();
-  initPWA();
 
   document.getElementById("loginForm").addEventListener("submit", handleLoginSubmit);
   document.getElementById("logoutBtn").addEventListener("click", instantLogout);
@@ -77,7 +72,6 @@ async function handleLoginSubmit(e) {
 
 function instantLogout() {
   localStorage.removeItem("snec_teacher");
-  cachedStudentsList = [];
   document.getElementById("appContainer").style.display = "none";
   document.getElementById("authScreen").style.display = "flex";
   document.getElementById("loginForm").reset();
@@ -90,35 +84,10 @@ function showDashboard(teacher) {
   document.getElementById("profileCollege").innerText = teacher.college;
 }
 
-function initPasswordToggle() {
-  const toggle = document.getElementById("togglePassword");
-  const field = document.getElementById("password");
-  toggle.addEventListener("click", () => {
-    const type = field.type === "password" ? "text" : "password";
-    field.type = type;
-    toggle.classList.toggle("fa-eye-slash");
-  });
-}
-
 function initDynamicDropdowns() {
   const classSelect = document.getElementById("classSelect");
   const examSelect = document.getElementById("examSelect");
   const subjectSelect = document.getElementById("subjectSelect");
-
-  const triggerFetch = () => {
-    const selectedClass = classSelect.value;
-    const examType = examSelect.value;
-    const subject = subjectSelect.value;
-
-    if (selectedClass && examType && subject) {
-      const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
-      if (teacher) {
-        loadStudents(teacher.affiliationNo, selectedClass, examType, subject);
-      }
-    } else {
-      document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
-    }
-  };
 
   classSelect.addEventListener("change", (e) => {
     const selectedClass = e.target.value;
@@ -132,12 +101,17 @@ function initDynamicDropdowns() {
       ACADEMIC_MAP[selectedClass].subjects.forEach(sub => {
         subjectSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
       });
+
+      // Load Students INSTANTLY upon Class Selection
+      const teacher = JSON.parse(localStorage.getItem("snec_teacher"));
+      if (teacher) {
+        loadStudents(teacher.affiliationNo, selectedClass, "", "");
+      }
+    } else {
+      document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class to load students</td></tr>`;
     }
-    triggerFetch();
   });
 
-  examSelect.addEventListener("change", triggerFetch);
-  subjectSelect.addEventListener("change", triggerFetch);
   document.getElementById("maxMarksInput").addEventListener("input", recalculateAllPercentages);
 }
 
@@ -191,7 +165,6 @@ function renderTable(students) {
     `;
   });
 
-  // Attach instant input & validation listeners
   document.querySelectorAll(".mark-input").forEach(input => {
     input.addEventListener("input", function() {
       validateAndCalculatePercentage(this);
@@ -199,7 +172,6 @@ function renderTable(students) {
   });
 }
 
-/* Strict Max Mark Limit Validation Function */
 function validateAndCalculatePercentage(inputElem) {
   const maxMarksInput = document.getElementById("maxMarksInput");
   const maxMarksVal = maxMarksInput.value.trim();
@@ -244,8 +216,18 @@ function handleSaveMarksClick() {
   const maxMarksVal = document.getElementById("maxMarksInput").value.trim();
   const examDate = document.getElementById("examDateInput").value || "";
 
-  if (!className || !examType || !subject) {
-    showAlert("Please select Class, Exam, and Subject first.");
+  if (!className) {
+    showAlert("Please select Class first.");
+    return;
+  }
+
+  if (!examType) {
+    showAlert("Please select Exam name.");
+    return;
+  }
+
+  if (!subject) {
+    showAlert("Please select Subject.");
     return;
   }
 
@@ -306,45 +288,17 @@ async function executePendingSave() {
     const data = await res.json();
     showAlert(data.message);
 
-    // FULL BLANK RESET OF ALL INPUTS
+    // Reset Form Data After Success
     document.getElementById("classSelect").value = "";
     document.getElementById("examSelect").innerHTML = '<option value="">Select Exam</option>';
     document.getElementById("subjectSelect").innerHTML = '<option value="">Select Subject</option>';
     document.getElementById("examDateInput").value = "";
     document.getElementById("maxMarksInput").value = "";
-    document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
+    document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class to load students</td></tr>`;
     
     pendingSaveData = null;
 
   } catch (err) {
     showAlert("Error saving marks. Please try again.");
   }
-}
-
-function initKeyboardNavigation() {
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target.tagName === "INPUT") {
-      e.preventDefault();
-      const focusable = Array.from(document.querySelectorAll("input, select, button"));
-      const index = focusable.indexOf(e.target);
-      if (index > -1 && index + 1 < focusable.length) {
-        focusable[index + 1].focus();
-      }
-    }
-  });
-}
-
-function initPWA() {
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const btn = document.getElementById("pwaInstallBtn");
-    btn.style.display = "block";
-    btn.addEventListener("click", () => {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => {
-        btn.style.display = "none";
-      });
-    });
-  });
 }
