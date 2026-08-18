@@ -1,5 +1,4 @@
-// Paste your deployed Google Apps Script Web App URL here
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxBoZRdoxMPa09e2Dla8IMxlkaGO3xAOe6U9acbyx13QJfSCjOZcxBQaY4R7z6LzjHZ/exec"; // തത്സമയ Web App URL ഇവിടെ മാറ്റി നൽകുക
 
 const ACADEMIC_MAP = {
   "S1": {
@@ -189,7 +188,6 @@ function renderTable(students) {
     `;
   });
 
-  // Attach instant input listener for percentage calculation
   document.querySelectorAll(".mark-input").forEach(input => {
     input.addEventListener("input", function() {
       updateRowPercentage(this);
@@ -281,11 +279,14 @@ async function executePendingSave() {
     const data = await res.json();
     showAlert(data.message);
 
-    // Full Form Reset & Clean-up
+    // FULL BLANK RESET OF ALL INPUTS
     document.getElementById("classSelect").value = "";
     document.getElementById("examSelect").innerHTML = '<option value="">Select Exam</option>';
     document.getElementById("subjectSelect").innerHTML = '<option value="">Select Subject</option>';
+    document.getElementById("examDateInput").value = "";
+    document.getElementById("maxMarksInput").value = "100";
     document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center;">Select Class, Exam & Subject to load students</td></tr>`;
+    
     pendingSaveData = null;
 
   } catch (err) {
